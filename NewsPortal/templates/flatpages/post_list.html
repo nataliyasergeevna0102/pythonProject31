@@ -1,0 +1,38 @@
+{% extends 'flatpages/default.html' %}
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+     <h1>Новости</h1>
+     {{object_list.count}}
+     {{Post.objects.all().order_by()}}
+        <table>
+           {% for news in post %}
+           <tr>
+                <h2>{{post.title_post|censor}}</h2>
+           </tr>
+           <tr>
+                <h2>{{ time_in|date:'M d Y' }}</h2>
+           </tr>
+           <tr>
+                <h2>{{post.text|truncatewords:2|censor }}</h2>
+           </tr>
+           {% endfor %}
+        </table>
+     {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+     {% endif %}
+     {{ page_obj.number }}
+     {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+     {% endif %}
+{% endblock content %}

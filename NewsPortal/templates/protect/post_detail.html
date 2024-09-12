@@ -1,0 +1,16 @@
+{% endblock title %}
+
+{% block content %}
+     <h1>Новости</h1>
+        <table>
+           <tr>
+                <h3>{{post.title_post|censor}}</h3>
+           </tr>
+           <tr>
+                <h3>{{ time_in|date:'M d Y' }}</h3>
+           </tr>
+           <tr>
+                <h3>{{post.text|censor}}</h3>
+           </tr>
+        </table>
+{% endblock content %}
