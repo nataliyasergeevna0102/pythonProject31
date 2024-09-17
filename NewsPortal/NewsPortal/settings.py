@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+if DEBUG:
+    EMAIL_BACKEND='django.core.mail.backends.console.EmailBackends'
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,8 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'news',
+    'news.apps.NewsConfig',
     'django_filters',
+    'django_apscheduler',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -85,6 +87,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'NewsPortal.wsgi.application'
 
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
@@ -142,6 +146,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
@@ -153,3 +158,11 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 ACCOUNT_FORMS = {'signup': 'sign.models.CommonSignupForm'}
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'nataliya.zh'
+EMAIL_HOST_PASSWORD = '777'
+EMAIL_USE_SSL = True
+
+#DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')

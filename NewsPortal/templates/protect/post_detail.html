@@ -1,16 +1,15 @@
-{% endblock title %}
-
-{% block content %}
-     <h1>Новости</h1>
-        <table>
-           <tr>
-                <h3>{{post.title_post|censor}}</h3>
-           </tr>
-           <tr>
-                <h3>{{ time_in|date:'M d Y' }}</h3>
-           </tr>
-           <tr>
-                <h3>{{post.text|censor}}</h3>
-           </tr>
-        </table>
-{% endblock content %}
+{% load custom_filters %}
+    <h3>
+        <a href = "{%url' news:details' post.id%}">
+           {{post.title_post|censor}}
+        </a>
+    </h3>
+    <p class = "details">
+        By <span class = "author"> {{post.author}} </span>
+        on <span class = "data"> {{post.created_at}} </span>
+        Category:
+        {% for c in post.category.values %}
+        <a href ="{% url 'news:category' c.id%} class = category"
+           >{{c.name}}</a>
+        {%end for%}
+    </p>

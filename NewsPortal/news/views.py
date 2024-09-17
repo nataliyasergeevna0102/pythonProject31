@@ -1,20 +1,24 @@
 from os import path
 
-from django.urls import reverse_lazy
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy, resolve
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from allauth.account.forms import SignupForm
 from django.contrib.auth.models import Group
 from .forms import PostForm
-from .models import Post, BaseRegisterForm
+from .models import Post, BaseRegisterForm, Category
 from .filters import PostFilter
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.conf import settings
 
-# Create your views here.
+DEFAULT_FROM_EMAIL=settings.DEFAULT_FROM_EMAIL
+
+
 class PostList(ListView):
     model = Post
     ordering = 'title_post'
@@ -129,4 +133,55 @@ def upgrade_me(request):
         authors_group.user_set.add(user)
     return redirect('/')
 
+
+class PostCategoryView(ListView):
+    model = Post
+    template_name = 'category.html'
+    context_object_name = "posts"
+    ordering = ['_created_at']
+    paginate_by = 10
+
+    def get_queryset(self):
+        self.id = (resolve(self.request.path_info).kwargs['pk'])
+        c = Category.objects.get(id=self.id)
+        queryset = Post.objects.filter (category=c)
+        return queryset
+
+    def get_content_data(self, **kwargs):
+        content = super().get_content_data(**kwargs)
+        user=self.request.user
+        category=Category.objects.get(id=self.id)
+        subscribed=category.subscribers.filter(email=user.email)
+        if not subscribed:
+            content['category']=category
+        return content
+
+
+@login_required
+def subscribe_to_category(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    email = user.email
+    if not category.subscribers.filter(id=user.id).exists():
+        category.subscribers.add(user)
+        html=render_to_string(
+            'mail/subscribed.html',
+            {
+                'category':category,
+                'user':user,
+            },
+        )
+        msg=EmailMultiAlternatives(
+            subject=f'{category} subscription',
+            body='',
+            from_email=DEFAULT_FROM_EMAIL,
+            to=[email,],
+        )
+        msg.attach_alternative(html, 'text/html')
+
+        try:
+            msg.send()
+        except Exception as e:
+            print(e)
+        return redirect('HTTP_REFERER')
 
