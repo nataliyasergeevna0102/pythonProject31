@@ -1,0 +1,15 @@
+{% load custom_filters %}
+{%if posts %}
+{% for post in posts %}
+{%include 'news/inc/details.html'%}
+<p>
+    {{post.text|censor}}
+</p>
+{%include 'news/inc/buttons.html'%}
+{%end for%}
+{% else %}
+<h2> No Posts yet</h2>
+{% end if%}
+<p></p>
+
+{%include 'news/inc/pagination.html'%}
