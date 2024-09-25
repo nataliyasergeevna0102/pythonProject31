@@ -38,6 +38,7 @@ TYPE_TEXT = [
     ("ARTI", "Статья")
 ]
 
+
 class Post(models.Model):
     article_rating = models.IntegerField(default=0)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)

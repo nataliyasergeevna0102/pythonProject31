@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy, resolve
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from allauth.account.forms import SignupForm
-from django.contrib.auth.models import Group
+
 from .forms import PostForm
 from .models import Post, BaseRegisterForm, Category
 from .filters import PostFilter
@@ -184,4 +184,5 @@ def subscribe_to_category(request, pk):
         except Exception as e:
             print(e)
         return redirect('HTTP_REFERER')
+
 
